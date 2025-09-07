@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "name": "neurochat",
+  "builds": [
+    {
+      "src": "Samples/TypeScript/Demo/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/Core/(.*)",
+      "dest": "/Core/$1"
+    },
+    {
+      "src": "/Samples/(.*)",
+      "dest": "/Samples/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/Samples/TypeScript/Demo/index.html"
+    }
+  ],
+  "env": {
+    "OPENAI_API_KEY": "@openai-api-key"
+  }
+}
