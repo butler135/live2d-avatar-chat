@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "neurochat",
   "builds": [
     {
       "src": "Samples/TypeScript/Demo/package.json",
@@ -11,12 +12,16 @@
   ],
   "routes": [
     {
-      "src": "/",
-      "dest": "/index.html"
+      "src": "/Core/(.*)",
+      "dest": "/Core/$1"
+    },
+    {
+      "src": "/Samples/(.*)",
+      "dest": "/Samples/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "/index.html"
     }
   ]
 }
