@@ -5,18 +5,18 @@
       "src": "Samples/TypeScript/Demo/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "Samples/TypeScript/Demo/dist"
+        "distDir": "dist"
       }
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": "/Samples/TypeScript/Demo/dist/index.html"
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",
-      "dest": "/Samples/TypeScript/Demo/dist/$1"
+      "dest": "/$1"
     }
   ]
 }
