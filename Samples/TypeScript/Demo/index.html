@@ -442,7 +442,7 @@
   </style>
 
   <!-- Live2D Core -->
-  <script src="../../../Core/live2dcubismcore.js"></script>
+  <script src="./Core/live2dcubismcore.js"></script>
   
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.2/dist/umd/supabase.js"></script>
@@ -564,12 +564,14 @@
     </div>
   </div>
 
-  <script src="./dist/bundle.js"></script>
+  <script src="./bundle.js"></script>
   
   <script>
     // Chat and Voice Integration
     // API key handling - uses environment variable or prompts user
-    const OPENAI_API_KEY = window.OPENAI_API_KEY || process.env.OPENAI_API_KEY || null;
+    function getOpenAIKey() {
+      return window.OPENAI_API_KEY || process.env.OPENAI_API_KEY || null;
+    }
     
     let isVoiceModeActive = false;
     let mediaRecorder = null;
@@ -577,10 +579,16 @@
     let authManager = null;
 
     async function sendMessage() {
+      console.log('sendMessage called'); // Debug log
       const input = document.getElementById('messageInput');
       const message = input.value.trim();
       
-      if (!message) return;
+      if (!message) {
+        console.log('No message entered');
+        return;
+      }
+      
+      console.log('Sending message:', message);
       
       // Add user message to chat
       addMessageToChat(message, 'user');
@@ -588,8 +596,8 @@
       
       try {
         // Check if API key is configured
-        if (!OPENAI_API_KEY || OPENAI_API_KEY === 'your-api-key-here') {
-          throw new Error('OpenAI API key not configured. Please set window.OPENAI_API_KEY or configure it in settings.');
+        if (!getOpenAIKey() || getOpenAIKey() === 'your-api-key-here') {
+          throw new Error('OpenAI API key not configured. Please set window.getOpenAIKey() or configure it in settings.');
         }
         
         // Call OpenAI API
@@ -597,7 +605,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${OPENAI_API_KEY}`
+            'Authorization': `Bearer ${getOpenAIKey()}`
           },
           body: JSON.stringify({
             model: 'gpt-4',
@@ -633,7 +641,7 @@
         }
         
         // Convert response to speech if API key is available
-        if (OPENAI_API_KEY && OPENAI_API_KEY !== 'your-api-key-here') {
+        if (getOpenAIKey() && getOpenAIKey() !== 'your-api-key-here') {
           await textToSpeech(reply);
         }
         
@@ -695,7 +703,7 @@
         voiceStatus.textContent = '🔄 Processing speech...';
         
         // Check if API key is configured
-        if (!OPENAI_API_KEY || OPENAI_API_KEY === 'your-api-key-here') {
+        if (!getOpenAIKey() || getOpenAIKey() === 'your-api-key-here') {
           throw new Error('OpenAI API key not configured for voice features');
         }
         
@@ -707,7 +715,7 @@
         const transcriptionResponse = await fetch('https://api.openai.com/v1/audio/transcriptions', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`
+            'Authorization': `Bearer ${getOpenAIKey()}`
           },
           body: formData
         });
@@ -747,7 +755,7 @@
         voiceStatus.textContent = '🔊 Speaking...';
         
         // Check if API key is configured
-        if (!OPENAI_API_KEY || OPENAI_API_KEY === 'your-api-key-here') {
+        if (!getOpenAIKey() || getOpenAIKey() === 'your-api-key-here') {
           throw new Error('OpenAI API key not configured for TTS');
         }
         
@@ -755,7 +763,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${OPENAI_API_KEY}`
+            'Authorization': `Bearer ${getOpenAIKey()}`
           },
           body: JSON.stringify({
             model: 'tts-1',
@@ -876,12 +884,34 @@
       await authManager.initialize();
       
       // Setup event listeners
-      document.getElementById('sendBtn').addEventListener('click', sendMessage);
-      document.getElementById('messageInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
+      console.log('Setting up event listeners...');
+      
+      const sendBtn = document.getElementById('sendBtn');
+      const messageInput = document.getElementById('messageInput');
+      
+      if (sendBtn) {
+        sendBtn.addEventListener('click', function(e) {
+          console.log('Send button clicked');
           sendMessage();
-        }
-      });
+        });
+        console.log('Send button listener attached');
+      } else {
+        console.error('Send button not found!');
+      }
+      
+      if (messageInput) {
+        messageInput.addEventListener('keypress', function(e) {
+          console.log('Key pressed:', e.key);
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            console.log('Enter key detected, calling sendMessage');
+            sendMessage();
+          }
+        });
+        console.log('Message input listener attached');
+      } else {
+        console.error('Message input not found!');
+      }
       
       document.getElementById('voiceBtn').addEventListener('click', toggleVoice);
       
@@ -902,6 +932,20 @@
       window.addMessage = addMessageToChat;
       window.signInWithProvider = signInWithProvider;
       window.signOut = signOut;
+      
+      // Initialize Live2D canvas and application
+      try {
+        if (window.LAppDelegate) {
+          const canvas = document.getElementById('globalMatrix');
+          if (canvas) {
+            canvas.width = 200;
+            canvas.height = 200;
+            window.LAppDelegate.getInstance().initialize(canvas);
+          }
+        }
+      } catch (error) {
+        console.log('Live2D initialization skipped:', error.message);
+      }
     });
   </script>
 </body>

@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --progress",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack -d --hide-modules || true && cp index.html dist/ && cp -r ../../../Core dist/Core && cp -r ../../Resources dist/Resources",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack -d --hide-modules || true && cp index.html dist/ && cp -r ../../../Core dist/Core && cp -r ../../Resources dist/Resources && cp background.mp4 dist/ && cp supabase-auth.js dist/",
     "build:prod": "webpack -p --hide-modules",
     "test": "tsc --noEmit",
     "lint": "eslint src -f codeframe --ext .ts",
