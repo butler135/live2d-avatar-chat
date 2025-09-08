@@ -5,8 +5,14 @@
       "src": "Samples/TypeScript/Demo/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"
+        "distDir": "Samples/TypeScript/Demo/dist"
       }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/Samples/TypeScript/Demo/dist/$1"
     }
   ],
   "headers": [
